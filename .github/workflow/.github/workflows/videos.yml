@@ -1,0 +1,25 @@
+name: Bulk Video Banayein
+on:
+  workflow_dispatch:
+jobs:
+  banao:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tool install karo
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Videos banao
+        run: |
+          mkdir -p output
+          for i in $(seq 1 10); do
+            ffmpeg -y \
+              -f lavfi -i color=c=blue:s=1080x1920:d=5 \
+              -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf:text='Video $i':fontsize=80:fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2" \
+              -c:v libx264 -pix_fmt yuv420p output/video-$i.mp4
+          done
+
+      - name: Videos download ke liye taiyaar karo
+        uses: actions/upload-artifact@v4
+        with:
+          name: meri-videos
+          path: output/
